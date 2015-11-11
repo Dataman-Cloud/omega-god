@@ -10,7 +10,7 @@ class Base(models.Model):
 
     class Meta:
        abstract = True
-       app_label = 'info'
+       app_label = 'omega'
     
     created_at = models.DateTimeField(default=timezone.now, null=True) 
     updated_at = models.DateTimeField(default=timezone.now, null=True) 
@@ -19,7 +19,7 @@ class User(Base):
 
     class Meta:
        db_table = 'user'
-       app_label = 'info'
+       app_label = 'omega'
 
     id = models.AutoField(primary_key=True) 
     email = models.EmailField(max_length=128, unique=True, null=False)
@@ -38,7 +38,7 @@ class Cluster(Base):
 
     class Meta:
        db_table = 'cluster'
-       app_label = 'info'
+       app_label = 'omega'
 
     TYPES = [
         ("1_master", "1_master"),
@@ -67,7 +67,7 @@ class Node(Base):
 
     class Meta:
        db_table = 'node'
-       app_label = 'info'
+       app_label = 'omega'
 
     STATUSES = [
         ('pending', 'pending'),
@@ -95,7 +95,7 @@ class NodeAttribute(Base):
 
     class Meta:
        db_table = 'node_attribute'
-       app_label = 'info'
+       app_label = 'omega'
 
     ATTRIBUTES = [
         ('transient', 'transient'),
@@ -112,7 +112,7 @@ class Service(Base):
 
     class Meta:
        db_table = 'service'
-       app_label = 'info'
+       app_label = 'omega'
 
     ISOLATORS = [
         ('bare', 'bare'),
