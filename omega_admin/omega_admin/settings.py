@@ -78,6 +78,15 @@ WSGI_APPLICATION = 'omega_admin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'omega_god',
+        'USER': 'root',
+        'PASSWORD': '111111',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    },
+
+    'omega': {
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'omega',
         'USER': 'root',
         'PASSWORD': '111111',
@@ -86,6 +95,7 @@ DATABASES = {
     }
 }
 
+DATABASE_ROUTERS = ['dbrouter.OmegaRouter']
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

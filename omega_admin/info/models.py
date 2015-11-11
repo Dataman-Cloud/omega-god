@@ -7,15 +7,19 @@ from django.utils import timezone
 # Create your models here.
 
 class Base(models.Model):
+
     class Meta:
        abstract = True
+       app_label = 'info'
     
     created_at = models.DateTimeField(default=timezone.now, null=True) 
     updated_at = models.DateTimeField(default=timezone.now, null=True) 
 
 class User(Base):
+
     class Meta:
-        db_table = 'user'
+       db_table = 'user'
+       app_label = 'info'
 
     id = models.AutoField(primary_key=True) 
     email = models.EmailField(max_length=128, unique=True, null=False)
@@ -31,8 +35,10 @@ class User(Base):
         return self.email
 
 class Cluster(Base):
+
     class Meta:
        db_table = 'cluster'
+       app_label = 'info'
 
     TYPES = [
         ("1_master", "1_master"),
@@ -58,8 +64,10 @@ class Cluster(Base):
         return self.name
 
 class Node(Base):
+
     class Meta:
        db_table = 'node'
+       app_label = 'info'
 
     STATUSES = [
         ('pending', 'pending'),
@@ -84,8 +92,10 @@ class Node(Base):
         return self.name
 
 class NodeAttribute(Base):
+
     class Meta:
        db_table = 'node_attribute'
+       app_label = 'info'
 
     ATTRIBUTES = [
         ('transient', 'transient'),
@@ -99,8 +109,10 @@ class NodeAttribute(Base):
     attribute = models.CharField(max_length=255, choices=ATTRIBUTES, null=False, default='transient')
     
 class Service(Base):
+
     class Meta:
        db_table = 'service'
+       app_label = 'info'
 
     ISOLATORS = [
         ('bare', 'bare'),
