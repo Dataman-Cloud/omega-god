@@ -28,7 +28,7 @@ Rerstart the omega-god after the database is ready
 # make restart-god
 ```
 
-Clean up the ENV
+## Clean up the ENV
 ```
 # make cleanup
 ```
