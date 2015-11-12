@@ -1,0 +1,181 @@
+-- MySQL dump 10.13  Distrib 5.5.46, for debian-linux-gnu (x86_64)
+--
+-- Host: 127.0.0.1    Database: omega
+-- ------------------------------------------------------
+-- Server version	5.6.26-log
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `alembic_version`
+--
+
+DROP TABLE IF EXISTS `alembic_version`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `alembic_version` (
+  `version_num` varchar(32) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `alembic_version`
+--
+
+LOCK TABLES `alembic_version` WRITE;
+/*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
+INSERT INTO `alembic_version` VALUES ('ba803e0d2e');
+/*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cluster`
+--
+
+DROP TABLE IF EXISTS `cluster`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cluster` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `name` varchar(200) NOT NULL,
+  `owner_id` int(11) NOT NULL,
+  `cluster_type` varchar(255) DEFAULT NULL,
+  `status` varchar(255) NOT NULL,
+  `master_ips` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`,`owner_id`),
+  KEY `owner_id` (`owner_id`),
+  CONSTRAINT `cluster_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cluster`
+--
+
+LOCK TABLES `cluster` WRITE;
+/*!40000 ALTER TABLE `cluster` DISABLE KEYS */;
+INSERT INTO `cluster` VALUES (1,'2015-10-29 01:43:16','2015-11-09 10:46:47','one',2,'1_master','running','[\"10.3.10.101\"]'),(2,'2015-10-29 01:59:36','2015-11-09 10:46:47','123',3,'1_master','running','[\"10.3.37.8\"]'),(8,'2015-10-29 02:49:33','2015-11-09 10:46:47','ones',2,'1_master','running','[\"192.168.111.90\"]'),(12,'2015-11-04 14:34:52','2015-11-09 10:46:47','test',5,'1_master','running','[\"10.3.10.16\"]'),(18,'2015-11-06 16:00:56','2015-11-06 16:01:29','zhihong',7,'1_master','running','[\"10.3.10.9\"]'),(19,'2015-11-06 16:26:18','2015-11-06 16:27:24','ttt',8,'1_master','running','[\"192.168.1.167\"]'),(21,'2015-11-06 16:47:04','2015-11-06 16:47:40','c2',6,'1_master','running','[\"10.3.10.122\"]'),(22,'2015-11-06 18:01:00','2015-11-06 18:01:53','123',1,'1_master','running','[\"10.3.10.40\"]'),(23,'2015-11-09 20:52:33','2015-11-09 20:53:05','test',4,'1_master','running','[\"10.3.10.6\"]');
+/*!40000 ALTER TABLE `cluster` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `node`
+--
+
+DROP TABLE IF EXISTS `node`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `node` (
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `id` char(32) NOT NULL,
+  `name` varchar(200) DEFAULT NULL,
+  `cluster_id` int(11) NOT NULL,
+  `status` varchar(255) NOT NULL,
+  `ip` varchar(100) DEFAULT NULL,
+  `role` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cluster_id` (`cluster_id`,`ip`),
+  CONSTRAINT `node_ibfk_1` FOREIGN KEY (`cluster_id`) REFERENCES `cluster` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `node`
+--
+
+LOCK TABLES `node` WRITE;
+/*!40000 ALTER TABLE `node` DISABLE KEYS */;
+INSERT INTO `node` VALUES ('2015-11-06 16:47:18','2015-11-09 20:48:13','013fad2b2a8d418aa4c95924ee00fd1e','m2',21,'terminated','10.3.10.122','master'),('2015-11-04 17:25:56','2015-11-09 20:48:13','10a0c85c244e4471a9c353b22d564e11','test1',12,'terminated','10.3.10.16','master'),('2015-11-06 18:01:31','2015-11-09 20:48:13','2bac5ee41b1a49a2b345a81d4801c04c','10.3.10.40',22,'terminated','10.3.10.40','master'),('2015-11-06 16:01:08','2015-11-09 20:48:13','7ddc2a1f83834ba4819d2ca463c54ccc','10.3.10.9',18,'terminated','10.3.10.9','master'),('2015-11-06 16:38:51','2015-11-09 20:48:13','8103f03e285a4fc9ace655cf19ad2d4e','192.168.1.167',19,'terminated','192.168.1.167','master'),('2015-10-29 02:50:29','2015-11-09 20:48:13','8b838ae65fc641d6a0888f79494087f5','192.168.111.90',8,'terminated','192.168.111.90','master'),('2015-11-09 20:52:44','2015-11-10 19:23:08','917c8d34b8134c9180f59cb4b5b35214','master',23,'running','10.3.10.6','master'),('2015-10-29 02:00:51','2015-11-09 20:48:13','93dff35fb38349de95b6d1d0a76df46e','admin',2,'terminated','10.3.37.8','master'),('2015-10-29 02:00:42','2015-11-09 20:48:13','b3a2fc295d2d44b399d6616a30528f05','10.3.10.101',1,'terminated','10.3.10.101','master'),('2015-11-06 16:33:25','2015-11-09 20:48:13','fd26ebb7e8d349579e9a93e7bef1d913','10.3.10.45',19,'terminated','10.3.10.45',NULL);
+/*!40000 ALTER TABLE `node` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `service`
+--
+
+DROP TABLE IF EXISTS `service`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `service` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `node_id` char(32) NOT NULL,
+  `isolator` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `node_id` (`node_id`,`name`),
+  CONSTRAINT `service_ibfk_1` FOREIGN KEY (`node_id`) REFERENCES `node` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=151 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `service`
+--
+
+LOCK TABLES `service` WRITE;
+/*!40000 ALTER TABLE `service` DISABLE KEYS */;
+INSERT INTO `service` VALUES (1,'2015-10-29 02:00:42','2015-10-29 02:01:15','zookeeper','b3a2fc295d2d44b399d6616a30528f05','container','running'),(2,'2015-10-29 02:00:42','2015-10-29 11:02:03','master','b3a2fc295d2d44b399d6616a30528f05','container','running'),(3,'2015-10-29 02:00:42','2015-10-29 11:31:17','marathon','b3a2fc295d2d44b399d6616a30528f05','container','running'),(4,'2015-10-29 02:00:42','2015-10-29 12:13:57','slave','b3a2fc295d2d44b399d6616a30528f05','container','running'),(5,'2015-10-29 02:00:42','2015-10-29 02:01:29','logcollection','b3a2fc295d2d44b399d6616a30528f05','container','running'),(6,'2015-10-29 02:00:51','2015-10-29 02:03:56','zookeeper','93dff35fb38349de95b6d1d0a76df46e','container','running'),(7,'2015-10-29 02:00:51','2015-10-29 02:04:18','master','93dff35fb38349de95b6d1d0a76df46e','container','running'),(8,'2015-10-29 02:00:51','2015-10-29 02:05:09','marathon','93dff35fb38349de95b6d1d0a76df46e','container','running'),(9,'2015-10-29 02:00:51','2015-10-29 02:05:13','slave','93dff35fb38349de95b6d1d0a76df46e','container','running'),(10,'2015-10-29 02:00:51','2015-10-29 02:05:09','logcollection','93dff35fb38349de95b6d1d0a76df46e','container','running'),(26,'2015-10-29 02:50:29','2015-10-29 02:51:51','zookeeper','8b838ae65fc641d6a0888f79494087f5','container','running'),(27,'2015-10-29 02:50:29','2015-10-29 02:52:02','master','8b838ae65fc641d6a0888f79494087f5','container','running'),(28,'2015-10-29 02:50:29','2015-10-29 02:53:11','marathon','8b838ae65fc641d6a0888f79494087f5','container','running'),(29,'2015-10-29 02:50:29','2015-10-29 02:56:30','slave','8b838ae65fc641d6a0888f79494087f5','container','running'),(30,'2015-10-29 02:50:29','2015-10-29 02:55:12','logcollection','8b838ae65fc641d6a0888f79494087f5','container','running'),(61,'2015-11-04 17:25:56','2015-11-04 17:26:22','master','10a0c85c244e4471a9c353b22d564e11','container','running'),(62,'2015-11-04 17:25:56','2015-11-04 18:35:23','slave','10a0c85c244e4471a9c353b22d564e11','container','running'),(63,'2015-11-04 17:25:56','2015-11-04 17:26:21','zookeeper','10a0c85c244e4471a9c353b22d564e11','container','running'),(64,'2015-11-04 17:25:56','2015-11-04 17:27:26','marathon','10a0c85c244e4471a9c353b22d564e11','container','running'),(65,'2015-11-04 17:25:56','2015-11-04 17:27:25','logcollection','10a0c85c244e4471a9c353b22d564e11','container','running'),(66,'2015-11-04 17:25:56','2015-11-04 17:27:29','cadvisor','10a0c85c244e4471a9c353b22d564e11','container','running'),(97,'2015-11-06 16:01:08','2015-11-06 16:01:34','master','7ddc2a1f83834ba4819d2ca463c54ccc','container','running'),(98,'2015-11-06 16:01:08','2015-11-06 16:01:41','slave','7ddc2a1f83834ba4819d2ca463c54ccc','container','running'),(99,'2015-11-06 16:01:08','2015-11-06 16:01:32','zookeeper','7ddc2a1f83834ba4819d2ca463c54ccc','container','running'),(100,'2015-11-06 16:01:08','2015-11-06 16:01:40','marathon','7ddc2a1f83834ba4819d2ca463c54ccc','container','running'),(101,'2015-11-06 16:01:08','2015-11-06 16:01:39','logcollection','7ddc2a1f83834ba4819d2ca463c54ccc','container','running'),(102,'2015-11-06 16:01:08','2015-11-06 16:01:43','cadvisor','7ddc2a1f83834ba4819d2ca463c54ccc','container','running'),(115,'2015-11-06 16:33:25','2015-11-06 16:33:47','master','fd26ebb7e8d349579e9a93e7bef1d913','container','uninstalled'),(116,'2015-11-06 16:33:25','2015-11-06 16:33:51','slave','fd26ebb7e8d349579e9a93e7bef1d913','container','running'),(117,'2015-11-06 16:33:25','2015-11-06 16:33:47','zookeeper','fd26ebb7e8d349579e9a93e7bef1d913','container','uninstalled'),(118,'2015-11-06 16:33:25','2015-11-06 16:33:47','marathon','fd26ebb7e8d349579e9a93e7bef1d913','container','uninstalled'),(119,'2015-11-06 16:33:25','2015-11-06 16:33:49','logcollection','fd26ebb7e8d349579e9a93e7bef1d913','container','running'),(120,'2015-11-06 16:33:25','2015-11-06 16:33:53','cadvisor','fd26ebb7e8d349579e9a93e7bef1d913','container','running'),(121,'2015-11-06 16:38:51','2015-11-06 16:39:18','master','8103f03e285a4fc9ace655cf19ad2d4e','container','running'),(122,'2015-11-06 16:38:51','2015-11-06 16:41:32','slave','8103f03e285a4fc9ace655cf19ad2d4e','container','running'),(123,'2015-11-06 16:38:51','2015-11-06 16:39:15','zookeeper','8103f03e285a4fc9ace655cf19ad2d4e','container','running'),(124,'2015-11-06 16:38:51','2015-11-06 16:39:28','marathon','8103f03e285a4fc9ace655cf19ad2d4e','container','running'),(125,'2015-11-06 16:38:51','2015-11-06 16:39:23','logcollection','8103f03e285a4fc9ace655cf19ad2d4e','container','running'),(126,'2015-11-06 16:38:51','2015-11-06 16:39:28','cadvisor','8103f03e285a4fc9ace655cf19ad2d4e','container','running'),(133,'2015-11-06 16:47:18','2015-11-06 16:47:44','master','013fad2b2a8d418aa4c95924ee00fd1e','container','running'),(134,'2015-11-06 16:47:18','2015-11-06 23:06:00','slave','013fad2b2a8d418aa4c95924ee00fd1e','container','running'),(135,'2015-11-06 16:47:18','2015-11-06 16:47:42','zookeeper','013fad2b2a8d418aa4c95924ee00fd1e','container','running'),(136,'2015-11-06 16:47:18','2015-11-06 16:47:50','marathon','013fad2b2a8d418aa4c95924ee00fd1e','container','running'),(137,'2015-11-06 16:47:18','2015-11-06 16:47:48','logcollection','013fad2b2a8d418aa4c95924ee00fd1e','container','running'),(138,'2015-11-06 16:47:18','2015-11-06 16:47:53','cadvisor','013fad2b2a8d418aa4c95924ee00fd1e','container','running'),(139,'2015-11-06 18:01:31','2015-11-06 18:01:53','master','2bac5ee41b1a49a2b345a81d4801c04c','container','running'),(140,'2015-11-06 18:01:31','2015-11-06 18:01:53','slave','2bac5ee41b1a49a2b345a81d4801c04c','container','running'),(141,'2015-11-06 18:01:31','2015-11-06 18:01:53','zookeeper','2bac5ee41b1a49a2b345a81d4801c04c','container','running'),(142,'2015-11-06 18:01:31','2015-11-06 18:01:53','marathon','2bac5ee41b1a49a2b345a81d4801c04c','container','running'),(143,'2015-11-06 18:01:31','2015-11-06 18:01:53','logcollection','2bac5ee41b1a49a2b345a81d4801c04c','container','running'),(144,'2015-11-06 18:01:31','2015-11-06 18:01:53','cadvisor','2bac5ee41b1a49a2b345a81d4801c04c','container','running'),(145,'2015-11-09 20:52:44','2015-11-09 20:53:11','master','917c8d34b8134c9180f59cb4b5b35214','container','running'),(146,'2015-11-09 20:52:44','2015-11-09 20:53:18','slave','917c8d34b8134c9180f59cb4b5b35214','container','running'),(147,'2015-11-09 20:52:44','2015-11-09 20:53:09','zookeeper','917c8d34b8134c9180f59cb4b5b35214','container','running'),(148,'2015-11-09 20:52:44','2015-11-09 20:53:25','marathon','917c8d34b8134c9180f59cb4b5b35214','container','running'),(149,'2015-11-09 20:52:44','2015-11-09 20:53:15','logcollection','917c8d34b8134c9180f59cb4b5b35214','container','running'),(150,'2015-11-09 20:52:44','2015-11-09 20:53:20','cadvisor','917c8d34b8134c9180f59cb4b5b35214','container','running');
+/*!40000 ALTER TABLE `service` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `email` varchar(128) NOT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `password` varbinary(1024) NOT NULL,
+  `is_superuser` tinyint(1) NOT NULL,
+  `is_stuff` tinyint(1) NOT NULL,
+  `last_login` datetime DEFAULT NULL,
+  `invitation_code` varchar(128) DEFAULT NULL,
+  `is_activated` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `phone_number` (`phone_number`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (1,'2015-10-29 01:34:52','2015-11-09 21:31:38','admin@shurenyun.com','+86018600001111','$pbkdf2-sha512$25000$/d/bW2uNMaY0xrjXmvM.hw$v5wFTJ5638ijlgbNCyZjCSAHOVgLrp38/mklAl6qxftZFa268HSGoz0lBLH6yZKxhT4PDQO7jyV8qf65tuJa7w',1,1,'2015-11-09 21:31:38',NULL,1),(2,'2015-10-29 01:42:27','2015-10-29 02:46:38','zhfang@dataman-inc.com',NULL,'$pbkdf2-sha512$25000$wNgbwzinVEoJofQeY.z9vw$DBJnUY/ussI60lZpIXIMIhoW70j6iNn6Wh3oISkUmFUsmP9bWW.JaHymNeibwl0CyaWiFgYiIyprwYR0lxecdQ',0,0,'2015-10-29 02:46:38','520060',1),(3,'2015-10-29 01:57:49','2015-10-29 15:54:01','xwzhang@dataman-inc.com',NULL,'$pbkdf2-sha512$25000$CqGUMqY0RmgNoRSi9F6LsQ$rSByT0TBxud87vScO83R1BKSqMUu/Z/2yvo8FYphndFh0LFaxspoWCcIs78h8hUG0dyNo2E5B6PbYa0Hdzpodw',0,0,'2015-10-29 15:54:01','766249',1),(4,'2015-10-29 02:01:06','2015-11-10 17:03:15','zpang@dataman-inc.com',NULL,'$pbkdf2-sha512$25000$do7xvjcm5JyTcg5BSEnpvQ$rYPuipa9Pke60iSJt3ttWb1ZD7l9/8VmYgVTnEKvq8d2OM8bQeAGE9nIjsXuLld5D/1mbsaLDaLxxmlGsIML4w',0,0,'2015-11-10 17:03:15','683285',1),(5,'2015-10-29 02:01:18','2015-11-04 16:11:57','jyliu@dataman-inc.com',NULL,'$pbkdf2-sha512$25000$MqbUeo9xjpFyLsVYS4mxtg$cVjbmIypE1w2z0R8nAsdwQ0X.9Ke5QzvNTuqT1Z4XnpA9vRa.9hA7N.6yKAHA6HyVJWQjZZbOonujZeP5ex1WA',0,0,'2015-11-04 16:11:57','507629',1),(6,'2015-10-29 02:01:35','2015-11-06 15:43:34','gqli@dataman-inc.com',NULL,'$pbkdf2-sha512$25000$sxbCOMcYgxCC8D6HMAZA6A$dw7d0yQWAwas.Rogs9o6725OmOw04wcSkJo1/wqONr49igWYf8qVTjhHAvAtn74NIMDrXFUHp2uRrntai09Pvg',0,0,'2015-11-06 15:43:34','767980',1),(7,'2015-11-06 15:26:57','2015-11-06 15:27:54','zhguo@dataman-inc.com',NULL,'$pbkdf2-sha512$25000$TAmBkHKOUUrpnfOe0/pfKw$9p4nqey.cXNSQiVM1wxjI305XmQTvTOGfIex.CLfALOBo6YQy0lGzOnZzxgtzWWacQgYOeRw4DGJ.CAWQCuovg',0,0,'2015-11-06 15:27:54','773375',1),(8,'2015-11-06 16:21:55','2015-11-06 16:25:57','jfchen@dataman-inc.com',NULL,'$pbkdf2-sha512$25000$nfMeA2DsXcs5Z6yVMiYEAA$r05Jpx1l9qk.tC63esmottWsqr8qxM29xnLEXoLz9bA0yysqxDobmAD0cbTY2lSXEVFlZzt/On2sDoTbOhTOvw',0,0,'2015-11-06 16:25:57','949420',1);
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2015-11-10 19:30:09
+
