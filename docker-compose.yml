@@ -1,0 +1,24 @@
+omega_db:
+  image: mysql:5.6
+  ports:
+    - "3306:3306"
+  volumes:
+    - ./mysql_settings/my.cnf:/etc/my.cnf
+  environment:
+    - MYSQL_ROOT_PASSWORD=111111
+omega_god_db:
+  image: mysql:5.6
+  volumes:
+    - ./mysql_settings/my.cnf:/etc/my.cnf
+  environment:
+    - MYSQL_ROOT_PASSWORD=111111
+omega_god:
+  build: ./omega_god
+  ports:
+    - "8000:8000"
+  volumes:
+    - ./omega_god:/code
+    - ./omega_god/omega_god/settings.py:/code/omega_god/settings.py
+  links:
+    - omega_god_db
+    - omega_db
