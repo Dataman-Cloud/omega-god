@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'omega_god',
         'USER': 'root',
         'PASSWORD': '111111',
-        'HOST': '127.0.0.1',
+        'HOST': 'omega_god_db',
         'PORT': '3306',
     },
 
@@ -90,7 +90,7 @@ DATABASES = {
         'NAME': 'omega',
         'USER': 'root',
         'PASSWORD': '111111',
-        'HOST': '127.0.0.1',
+        'HOST': 'omega_db',
         'PORT': '3306',
     }
 }
