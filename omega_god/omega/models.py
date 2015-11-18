@@ -11,9 +11,9 @@ class Base(models.Model):
     class Meta:
        abstract = True
        app_label = 'omega'
-    
-    created_at = models.DateTimeField(default=timezone.now, null=True) 
-    updated_at = models.DateTimeField(default=timezone.now, null=True) 
+
+    created_at = models.DateTimeField(default=timezone.now, null=True)
+    updated_at = models.DateTimeField(default=timezone.now, null=True)
 
 class User(Base):
 
@@ -21,15 +21,17 @@ class User(Base):
        db_table = 'user'
        app_label = 'omega'
 
-    id = models.AutoField(primary_key=True) 
+    id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=128, unique=True, null=False)
     invitation_code = models.CharField(max_length=128, null=True)
     phone_number = models.CharField(max_length=20, unique=True, null=True)     #
     password = models.BinaryField(max_length=1024, null=False)     #
-    is_superuser = models.BooleanField(null=False) 
-    is_stuff = models.BooleanField(null=False) 
-    last_login = models.DateTimeField(default=timezone.now, null=True) 
-    is_activated = models.BooleanField(default=False) 
+    is_superuser = models.BooleanField(null=False)
+    is_stuff = models.BooleanField(null=False)
+    last_login = models.DateTimeField(default=timezone.now, null=True)
+    is_activated = models.BooleanField(default=False)
+    company = models.CharField(max_length=128, null=False)
+    wechat_qq = models.CharField(max_length=128, null=False) 
 
     def __str__(self):
         return self.email
@@ -53,7 +55,7 @@ class Cluster(Base):
         ("failed", "failed")
     ]
 
-    id = models.AutoField(primary_key=True) 
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, null=False)
     cluster_type = models.CharField(max_length=255, choices=TYPES, default='1_master')
     status = models.CharField(max_length=255, choices=STATUS, default='uninstalled', null=False)
@@ -83,7 +85,7 @@ class Node(Base):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=200, null=True)
-    cluster = models.ForeignKey(Cluster) 
+    cluster = models.ForeignKey(Cluster)
     status = models.CharField(max_length=255, choices=STATUSES, null=False)
     ip = models.GenericIPAddressField(null=True)
     role = models.CharField(max_length=255, choices=ROLES, null=True)
@@ -104,10 +106,10 @@ class NodeAttribute(Base):
         ('persistent', 'persistent')
     ]
 
-    id = models.AutoField(primary_key=True) 
-    node = models.ForeignKey(Node) 
+    id = models.AutoField(primary_key=True)
+    node = models.ForeignKey(Node)
     attribute = models.CharField(max_length=255, choices=ATTRIBUTES, null=False, default='transient')
-    
+
 class Service(Base):
 
     class Meta:
@@ -135,9 +137,8 @@ class Service(Base):
         ('exhibitor', 'exhibitor')
     ]
 
-    id = models.AutoField(primary_key=True) 
+    id = models.AutoField(primary_key=True)
     name  = models.CharField(max_length=255, choices=NAMES, null=False, default='master')
     node = models.ForeignKey(Node)
     isolator  = models.CharField(max_length=255, choices=ISOLATORS, null=False, default='container')
     status  = models.CharField(max_length=255, choices=STATUSES, null=False, default='uninstalled')
-    

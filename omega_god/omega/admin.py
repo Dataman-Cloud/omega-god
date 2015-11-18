@@ -57,8 +57,8 @@ class NodeInline(MultiDBTabularInline):
 
 class UserAdmin(MultiDBModelAdmin):
     fieldsets = [
-        ('User Info', {'fields': ('email', 'phone_number',
-            'invitation_code', 'last_login', 'created_at',  
+        ('User Info', {'fields': ('email', 'company', 'wechat_qq', 'phone_number',
+            'invitation_code', 'last_login', 'created_at',
             'updated_at')
             }
         ),
@@ -68,15 +68,15 @@ class UserAdmin(MultiDBModelAdmin):
         ),
     ]
     inlines = [ClusterInline]
-    list_display = ('id', 'email', 'phone_number', 'invitation_code', 'created_at', 'last_login', 'is_activated', 'is_superuser')
+    list_display = ('id', 'email', 'company', 'wechat_qq', 'phone_number', 'created_at', 'last_login', 'is_activated', 'is_superuser')
     list_filter = ['last_login']
     search_fields = ['email']
-    
+
 
 class ClusterAdmin(MultiDBModelAdmin):
     fieldsets = [
         ('Cluster Info', {'fields': ('name', 'owner',
-            'cluster_type', 'master_ips', 'created_at',  
+            'cluster_type', 'master_ips', 'created_at',
             'updated_at')
             }
         ),
@@ -91,4 +91,3 @@ class ClusterAdmin(MultiDBModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Cluster, ClusterAdmin)
-
