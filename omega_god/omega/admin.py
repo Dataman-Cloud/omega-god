@@ -50,12 +50,23 @@ class MultiDBTabularInline(admin.TabularInline):
 class ClusterInline(MultiDBTabularInline):
     model = Cluster
     extra = 0
+    readonly_fields = ('name', 'owner', 'cluster_type', 'master_ips',
+                           'created_at', 'updated_at', 'status'
+                      )
+
 
 class NodeInline(MultiDBTabularInline):
     model = Node
     extra = 0
+    readonly_fields = ('id', 'name', 'status', 'ip', 'role', 'created_at', 'updated_at')
+
 
 class UserAdmin(MultiDBModelAdmin):
+    readonly_fields = ('id', 'email', 'company', 'wechat_qq',
+                       'phone_number', 'invitation_code', 'last_login',
+                        'created_at', 'updated_at', 'is_activated',
+                        'is_superuser', 'is_stuff'
+                      )
     fieldsets = [
         ('User Info', {'fields': ('id', 'email', 'company', 'wechat_qq', 'phone_number',
             'invitation_code', 'last_login', 'created_at',
@@ -74,6 +85,10 @@ class UserAdmin(MultiDBModelAdmin):
 
 
 class ClusterAdmin(MultiDBModelAdmin):
+    readonly_fields = ('name', 'owner', 'cluster_type', 'master_ips',
+                       'created_at', 'updated_at', 'status'
+                      )
+
     fieldsets = [
         ('Cluster Info', {'fields': ('name', 'owner',
             'cluster_type', 'master_ips', 'created_at',
@@ -88,7 +103,7 @@ class ClusterAdmin(MultiDBModelAdmin):
     list_display = ('id', 'name', 'get_user_email', 'get_user_company', 'cluster_type', 'master_ips', 'status', 'created_at', 'updated_at')
     list_filter = ['cluster_type', 'status', 'created_at', 'updated_at']
     search_fields = ['name', 'owner__email', 'owner__company']
-    
+
     def get_user_email(self, obj):
         return obj.owner.email
     get_user_email.admin_order_field = 'email'
@@ -98,5 +113,7 @@ class ClusterAdmin(MultiDBModelAdmin):
         return obj.owner.company
     get_user_company.admin_order_field = 'company'
     get_user_company.short_description = 'User Company'
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Cluster, ClusterAdmin)
