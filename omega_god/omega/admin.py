@@ -57,7 +57,7 @@ class NodeInline(MultiDBTabularInline):
 
 class UserAdmin(MultiDBModelAdmin):
     fieldsets = [
-        ('User Info', {'fields': ('email', 'company', 'wechat_qq', 'phone_number',
+        ('User Info', {'fields': ('id', 'email', 'company', 'wechat_qq', 'phone_number',
             'invitation_code', 'last_login', 'created_at',
             'updated_at')
             }
@@ -69,8 +69,8 @@ class UserAdmin(MultiDBModelAdmin):
     ]
     inlines = [ClusterInline]
     list_display = ('id', 'email', 'company', 'wechat_qq', 'phone_number', 'created_at', 'last_login', 'is_activated', 'is_superuser')
-    list_filter = ['last_login']
-    search_fields = ['email']
+    list_filter = ['created_at', 'last_login', 'is_activated']
+    search_fields = ['email', 'company', 'phone_number', 'wechat_qq']
 
 
 class ClusterAdmin(MultiDBModelAdmin):
@@ -85,9 +85,18 @@ class ClusterAdmin(MultiDBModelAdmin):
         ),
     ]
     inlines = [NodeInline]
-    list_display = ('id', 'name', 'owner', 'cluster_type', 'master_ips', 'status', 'created_at', 'updated_at')
-    list_filter = ['cluster_type', 'owner']
+    list_display = ('id', 'name', 'get_user_email', 'get_user_company', 'cluster_type', 'master_ips', 'status', 'created_at', 'updated_at')
+    list_filter = ['cluster_type', 'status', 'created_at', 'updated_at']
     search_fields = ['name']
 
+    def get_user_email(self, obj):
+        return obj.owner.email
+    get_user_email.admin_order_field = 'email'
+    get_user_email.short_description = 'User Email'
+
+    def get_user_company(self, obj):
+        return obj.owner.company
+    get_user_company.admin_order_field = 'company'
+    get_user_company.short_description = 'User Company'
 admin.site.register(User, UserAdmin)
 admin.site.register(Cluster, ClusterAdmin)
