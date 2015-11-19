@@ -87,8 +87,8 @@ class ClusterAdmin(MultiDBModelAdmin):
     inlines = [NodeInline]
     list_display = ('id', 'name', 'get_user_email', 'get_user_company', 'cluster_type', 'master_ips', 'status', 'created_at', 'updated_at')
     list_filter = ['cluster_type', 'status', 'created_at', 'updated_at']
-    search_fields = ['name']
-
+    search_fields = ['name', 'owner__email', 'owner__company']
+    
     def get_user_email(self, obj):
         return obj.owner.email
     get_user_email.admin_order_field = 'email'
