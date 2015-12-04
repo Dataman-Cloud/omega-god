@@ -31,7 +31,7 @@ class User(Base):
     last_login = models.DateTimeField(default=timezone.now, null=True)
     is_activated = models.BooleanField(default=False)
     company = models.CharField(max_length=128, null=False)
-    wechat_qq = models.CharField(max_length=128, null=False) 
+    wechat_qq = models.CharField(max_length=128, null=False)
 
     def __str__(self):
         return self.email
@@ -56,6 +56,17 @@ class Cluster(Base):
     ]
 
     id = models.AutoField(primary_key=True)
+    @property
+    def nodes_count(self):
+        return Node.objects.filter(cluster__id=self.id).count()
+
+    @property
+    def created_at_of_the_last_node(self):
+        try:
+            return Node.objects.filter(cluster__id=self.id).order_by('-created_at')[0].created_at
+        except:
+            return "None"
+
     name = models.CharField(max_length=200, null=False)
     cluster_type = models.CharField(max_length=255, choices=TYPES, default='1_master')
     status = models.CharField(max_length=255, choices=STATUS, default='uninstalled', null=False)
@@ -100,15 +111,13 @@ class NodeAttribute(Base):
        app_label = 'omega'
 
     ATTRIBUTES = [
-        ('transient', 'transient'),
         ('gateway', 'gateway'),
         ('proxy', 'proxy'),
-        ('persistent', 'persistent')
     ]
 
     id = models.AutoField(primary_key=True)
     node = models.ForeignKey(Node)
-    attribute = models.CharField(max_length=255, choices=ATTRIBUTES, null=False, default='transient')
+    attribute = models.CharField(max_length=255, choices=ATTRIBUTES, null=False)
 
 class Service(Base):
 
