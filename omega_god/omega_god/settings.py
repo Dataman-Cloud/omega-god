@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'omega',
+    'oapp',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -78,24 +79,33 @@ WSGI_APPLICATION = 'omega_god.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'omega_god',
-        'USER': 'root',
-        'PASSWORD': '111111',
-        'HOST': 'omega_god_db',
-        'PORT': '3306',
-    },
+        'NAME': os.environ['GOD_DB_NAME'],
+        'USER': os.environ['GOD_DB_USER'],
+        'PASSWORD': os.environ['GOD_DB_PASSWORD'],
+        'HOST': os.environ['GOD_DB_HOST'],
+        'PORT': os.environ['GOD_DB_PORT'],
+        },
 
     'omega': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'omega',
-        'USER': 'root',
-        'PASSWORD': '111111',
-        'HOST': 'omega_db',
-        'PORT': '3306',
-    }
+        'NAME': os.environ['OMEGA_DB_NAME'],
+        'USER': os.environ['OMEGA_DB_USER'],
+        'PASSWORD': os.environ['OMEGA_DB_PASSWORD'],
+        'HOST': os.environ['OMEGA_DB_HOST'],
+        'PORT': os.environ['OMEGA_DB_PORT'],
+    },
+
+    'oapp': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ['OAPP_DB_NAME'],
+        'USER': os.environ['OAPP_DB_USER'],
+        'PASSWORD': os.environ['OAPP_DB_PASSWORD'],
+        'HOST': os.environ['OAPP_DB_HOST'],
+        'PORT': os.environ['OAPP_DB_PORT'],
+    },
 }
 
-DATABASE_ROUTERS = ['dbrouter.OmegaRouter']
+DATABASE_ROUTERS = ['dbrouter.OmegaRouter', 'dbrouter.OappRouter']
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
