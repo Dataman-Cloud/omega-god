@@ -42,19 +42,6 @@ class Cluster(Base):
        db_table = 'cluster'
        app_label = 'omega'
 
-    TYPES = [
-        ("1_master", "1_master"),
-        ("3_masters", "3_masters"),
-        ("5_masters", "5_masters")
-    ]
-
-    STATUS = [
-        ("uninstalled", "uninstalled"),
-        ("running", "running"),
-        ("installing", "installing"),
-        ("failed", "failed")
-    ]
-
     id = models.AutoField(primary_key=True)
     @property
     def nodes_count(self):
@@ -68,8 +55,8 @@ class Cluster(Base):
             return "None"
 
     name = models.CharField(max_length=200, null=False)
-    cluster_type = models.CharField(max_length=255, choices=TYPES, default='1_master')
-    status = models.CharField(max_length=255, choices=STATUS, default='uninstalled', null=False)
+    cluster_type = models.CharField(max_length=255, default='1_master')
+    status = models.CharField(max_length=255, default='uninstalled', null=False)
     master_ips = models.CharField(max_length=255)
     owner = models.ForeignKey(User)
 
@@ -82,24 +69,12 @@ class Node(Base):
        db_table = 'node'
        app_label = 'omega'
 
-    STATUSES = [
-        ('pending', 'pending'),
-        ('installing', 'installing'),
-        ('running', 'running'),
-        ('terminating', 'terminating'),
-        ('terminated', 'terminated'),
-    ]
-    ROLES = [
-        ('master', 'master'),
-        ('slave', 'slave')
-    ]
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=200, null=True)
     cluster = models.ForeignKey(Cluster)
-    status = models.CharField(max_length=255, choices=STATUSES, null=False)
     ip = models.GenericIPAddressField(null=True)
-    role = models.CharField(max_length=255, choices=ROLES, null=True)
+    role = models.CharField(max_length=255, null=True)
+    agent_version = models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return self.name
@@ -110,14 +85,9 @@ class NodeAttribute(Base):
        db_table = 'node_attribute'
        app_label = 'omega'
 
-    ATTRIBUTES = [
-        ('gateway', 'gateway'),
-        ('proxy', 'proxy'),
-    ]
-
     id = models.AutoField(primary_key=True)
     node = models.ForeignKey(Node)
-    attribute = models.CharField(max_length=255, choices=ATTRIBUTES, null=False)
+    attribute = models.CharField(max_length=255, null=False)
 
 class Service(Base):
 
@@ -125,29 +95,9 @@ class Service(Base):
        db_table = 'service'
        app_label = 'omega'
 
-    ISOLATORS = [
-        ('bare', 'bare'),
-        ('container', 'container'),
-    ]
-    STATUSES = [
-        ('installing', 'installing'),
-        ('failed', 'failed'),
-        ('running', 'running'),
-        ('uninstalling', 'uninstalling'),
-        ('uninstalled', 'uninstalled'),
-    ]
-    NAMES = [
-        ('master', 'master'),
-        ('slave', 'slave'),
-        ('zookeeper', 'zookeeper'),
-        ('marathon', 'marathon'),
-        ('logcollection', 'logcollection'),
-        ('cadvisor', 'cadvisor'),
-        ('exhibitor', 'exhibitor')
-    ]
-
     id = models.AutoField(primary_key=True)
-    name  = models.CharField(max_length=255, choices=NAMES, null=False, default='master')
+    name  = models.CharField(max_length=255, null=False, default='master')
     node = models.ForeignKey(Node)
-    isolator  = models.CharField(max_length=255, choices=ISOLATORS, null=False, default='container')
-    status  = models.CharField(max_length=255, choices=STATUSES, null=False, default='uninstalled')
+    isolator  = models.CharField(max_length=255, null=False, default='container')
+    status  = models.CharField(max_length=255, null=False, default='uninstalled')
+    version = models.CharField(max_length=255, null=False)

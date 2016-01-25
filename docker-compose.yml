@@ -1,3 +1,12 @@
+oapp_db:
+  image: mysql:5.6
+  ports:
+    - "3307:3306"
+  volumes:
+    - ./mysql_settings/my.cnf:/etc/my.cnf
+  environment:
+    - MYSQL_ROOT_PASSWORD=111111
+    - MYSQL_DATABASE=oapp
 omega_db:
   image: mysql:5.6
   ports:
@@ -6,19 +15,26 @@ omega_db:
     - ./mysql_settings/my.cnf:/etc/my.cnf
   environment:
     - MYSQL_ROOT_PASSWORD=111111
+    - MYSQL_DATABASE=omega
 omega_god_db:
   image: mysql:5.6
   volumes:
     - ./mysql_settings/my.cnf:/etc/my.cnf
   environment:
     - MYSQL_ROOT_PASSWORD=111111
+    - MYSQL_DATABASE=omega_god
 omega_god:
   build: ./omega_god
   ports:
     - "8000:8000"
+  environment:
+    - GOD_DB_HOST=omega_god_db
+    - OMEGA_DB_HOST=omega_db
+    - OAPP_DB_HOST=oapp_db
   volumes:
     - ./omega_god:/code
     - ./omega_god/omega_god/settings.py:/code/omega_god/settings.py
   links:
     - omega_god_db
     - omega_db
+    - oapp_db

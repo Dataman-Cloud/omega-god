@@ -9,14 +9,10 @@ init:
 	docker-compose -p omega_god up -d
 
 # TODO Improve me by docker-compose one-off cmd
-create-db:
-	docker exec -it omegagod_omega_god_db_1 mysql -uroot -p111111 -e "create database omega_god"
-	mysql -uroot -p111111 -h127.0.0.1 -e "create database omega"
-
-# TODO Improve me by docker-compose one-off cmd
 init-db:
 	docker exec -it omegagod_omega_god_1 python3 manage.py migrate
 	mysql -uroot -p111111 -h127.0.0.1 omega < mysql_settings/omega_dump
+	mysql -uroot -p111111 -h127.0.0.1 -P3307 oapp < mysql_settings/oapp_dump
 
 # TODO Improve me by docker-compose one-off cmd
 create-superuser:
@@ -36,10 +32,9 @@ help:
 	@echo ''
 	@echo '  init                    - start-containers and update-ip-port'
 	@echo '  cleanup                 - Clean up development env gracefully'
-	@echo '  create-db               - Create db'
+	@echo '  init-db                 - DB migration and sql import'
 	@echo '  create-superuser        - Create superuser'
 	@echo '  generate-revision-for-db - auto generate revision for db.'
 
 	@echo '  py-cleanup              - Clean up *.pyc, *.pyo, __pycache__'
 	@echo '  help                    - Show this help message and exit'
-
