@@ -101,3 +101,13 @@ class Service(Base):
     isolator  = models.CharField(max_length=255, null=False, default='container')
     status  = models.CharField(max_length=255, null=False, default='uninstalled')
     version = models.CharField(max_length=255, null=False)
+
+
+class Notice(Base):
+
+    class Meta:
+        db_table = 'notice'
+        app_label = 'omega'
+
+    id = models.AutoField(primary_key=True)
+    content = models.CharField(max_length=1000, null=True)
