@@ -1,8 +1,11 @@
+from django import forms
 from django.contrib import admin
 
 from multidb import MultiDBModelAdmin, MultiDBTabularInline
 
-from .models import User, Cluster, Node
+from .models import User, Cluster, Node, Notice
+
+
 # Register your models here.
 
 class ClusterInline(MultiDBTabularInline):
@@ -91,5 +94,25 @@ class ClusterAdmin(MultiDBModelAdmin):
     get_created_at_of_the_last_node.short_description = 'Last Node Created at'
 
 
+class NoticeAdmin(admin.ModelAdmin):
+    using = 'omega'
+
+    readonly_fields = ('id', 'created_at', 'updated_at')
+    fieldsets = [
+        ('Notice Info', {'fields': ('id', 'content', 'created_at', 'updated_at')})
+    ]
+    list_display = ('id', 'content', 'created_at')
+    list_filter = ['created_at']
+    search_fields = ['created_at']
+
+    # for markdown, webpage need show textarea
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = super(NoticeAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        if db_field.name == 'content':
+            formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
+        return formfield
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Cluster, ClusterAdmin)
+admin.site.register(Notice, NoticeAdmin)
