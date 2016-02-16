@@ -99,11 +99,11 @@ class NoticeAdmin(admin.ModelAdmin):
 
     readonly_fields = ('id', 'created_at', 'updated_at')
     fieldsets = [
-        ('Notice Info', {'fields': ('id', 'content', 'created_at', 'updated_at')})
+        ('Notice Info', {'fields': ('id', 'content', 'enabled', 'created_at')})
     ]
-    list_display = ('id', 'content', 'created_at')
-    list_filter = ['created_at']
-    search_fields = ['created_at']
+    list_display = ('id', 'content', 'enabled', 'created_at')
+    list_filter = ['created_at', 'enabled']
+    search_fields = ['created_at', 'enabled']
 
     # for markdown, webpage need show textarea
     def formfield_for_dbfield(self, db_field, **kwargs):

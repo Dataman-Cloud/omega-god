@@ -111,3 +111,4 @@ class Notice(Base):
 
     id = models.AutoField(primary_key=True)
     content = models.CharField(max_length=1000, null=True)
+    enabled = models.BooleanField(default=False, null=False)
