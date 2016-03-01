@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 
 from multidb import MultiDBModelAdmin, MultiDBTabularInline
+from daterange_filter.filter import DateTimeRangeFilter
 
 from .models import User, Cluster, Node, Notice
 
@@ -47,7 +48,7 @@ class UserAdmin(MultiDBModelAdmin):
     ]
     inlines = [ClusterInline]
     list_display = ('id', 'email', 'company', 'wechat_qq', 'phone_number', 'created_at', 'last_login', 'is_activated', 'is_superuser')
-    list_filter = ['created_at', 'last_login', 'is_activated']
+    list_filter = [('created_at', DateTimeRangeFilter), ('last_login', DateTimeRangeFilter), 'is_activated']
     search_fields = ['email', 'company', 'phone_number', 'wechat_qq']
 
 
