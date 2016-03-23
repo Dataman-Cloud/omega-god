@@ -36,6 +36,45 @@ class User(Base):
     def __str__(self):
         return self.email
 
+
+class Role(Base):
+
+    class Meta:
+        db_table = 'role'
+        app_label = 'omega'
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=128, null=False)
+
+
+class Group(Base):
+
+    class Meta:
+        db_table = 'group'
+        app_label = 'omega'
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=128, null=False)
+    description = models.CharField(max_length=255)
+    owner = models.ForeignKey(User, null=False)
+
+    @property
+    def member_count(self):
+        return GroupUser.objects.filter(group__id=self.id).count()
+
+
+class GroupUser(Base):
+
+    class Meta:
+        db_table = 'group_user'
+        app_label = 'omega'
+
+    id = models.AutoField(primary_key=True)
+    group = models.ForeignKey(Group, null=False)
+    user = models.ForeignKey(User, null=False)
+    role = models.ForeignKey(Role, null=False)
+
+
 class Cluster(Base):
 
     class Meta:
@@ -59,9 +98,11 @@ class Cluster(Base):
     status = models.CharField(max_length=255, default='uninstalled', null=False)
     master_ips = models.CharField(max_length=255)
     owner = models.ForeignKey(User)
+    group = models.ForeignKey(Group)
 
     def __str__(self):
         return self.name
+
 
 class Node(Base):
 
@@ -103,41 +144,3 @@ class Notice(Base):
     id = models.AutoField(primary_key=True)
     content = models.CharField(max_length=1000, null=True)
     enabled = models.BooleanField(default=False, null=False)
-
-
-class Role(Base):
-
-    class Meta:
-        db_table = 'role'
-        app_label = 'omega'
-
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=128, null=False)
-
-
-class Group(Base):
-
-    class Meta:
-        db_table = 'group'
-        app_label = 'omega'
-
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=128, null=False)
-    description = models.CharField(max_length=255)
-    owner = models.ForeignKey(User, null=False)
-
-    @property
-    def member_count(self):
-        return GroupUser.objects.filter(group__id=self.id).count()
-
-
-class GroupUser(Base):
-
-    class Meta:
-        db_table = 'group_user'
-        app_label = 'omega'
-
-    id = models.AutoField(primary_key=True)
-    group = models.ForeignKey(Group, null=False)
-    user = models.ForeignKey(User, null=False)
-    role = models.ForeignKey(Role, null=False)

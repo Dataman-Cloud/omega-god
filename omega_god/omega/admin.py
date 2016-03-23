@@ -56,12 +56,12 @@ class UserAdmin(MultiDBModelAdmin):
 class ClusterAdmin(MultiDBModelAdmin):
     using = 'omega'
 
-    readonly_fields = ('name', 'owner', 'cluster_type', 'master_ips',
+    readonly_fields = ('name', 'owner', 'group', 'cluster_type', 'master_ips',
                        'created_at', 'updated_at', 'status'
                       )
 
     fieldsets = [
-        ('Cluster Info', {'fields': ('name', 'owner',
+        ('Cluster Info', {'fields': ('name', 'owner', 'group',
             'cluster_type', 'master_ips', 'created_at',
             'updated_at')
             }
@@ -71,7 +71,8 @@ class ClusterAdmin(MultiDBModelAdmin):
         ),
     ]
     inlines = [NodeInline]
-    list_display = ('id', 'name', 'cluster_type', 'status', 'created_at', 'get_user_email', 'get_user_company', 'get_nodes_count', 'get_created_at_of_the_last_node')
+    list_display = ('id', 'name', 'cluster_type', 'status', 'created_at', 'get_user_email', 'get_user_company',
+                    'get_group_name', 'get_nodes_count', 'get_created_at_of_the_last_node')
     list_filter = ['cluster_type', 'status', 'created_at']
     search_fields = ['name', 'owner__email', 'owner__company']
 
@@ -94,6 +95,11 @@ class ClusterAdmin(MultiDBModelAdmin):
         return obj.created_at_of_the_last_node
     get_created_at_of_the_last_node.admin_order_field = 'created_at_of_the_last_node'
     get_created_at_of_the_last_node.short_description = 'Last Node Created at'
+
+    def get_group_name(self, obj):
+        return obj.group.name
+    get_group_name.admin_order_field = ''
+    get_group_name.short_description = 'Group'
 
 
 class NoticeAdmin(admin.ModelAdmin):
