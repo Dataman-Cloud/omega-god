@@ -1,10 +1,11 @@
 from django import forms
 from django.contrib import admin
+from django.db import models
 
 from multidb import MultiDBModelAdmin, MultiDBTabularInline
 from daterange_filter.filter import DateTimeRangeFilter
 
-from .models import User, Cluster, Node, Notice
+from .models import User, Cluster, Node, Notice, Group
 
 
 # Register your models here.
@@ -106,7 +107,6 @@ class NoticeAdmin(admin.ModelAdmin):
     list_filter = ['created_at', 'enabled']
     search_fields = ['created_at', 'enabled']
 
-    # for markdown, webpage need show textarea
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super(NoticeAdmin, self).formfield_for_dbfield(db_field, **kwargs)
         if db_field.name == 'content':
@@ -114,6 +114,34 @@ class NoticeAdmin(admin.ModelAdmin):
         return formfield
 
 
+class GroupAdmin(admin.ModelAdmin):
+    using = 'omega'
+
+    readonly_fields = ('id', 'name', 'owner', 'created_at', 'updated_at')
+    fieldsets = [
+        ('Group Info', {'fields': ('id', 'name', 'owner', 'created_at', 'updated_at')})
+    ]
+    list_display = ('id', 'name', 'get_user_email', 'get_member_count', 'created_at', 'updated_at')
+    list_filter = [('created_at', DateTimeRangeFilter), ('updated_at', DateTimeRangeFilter)]
+    search_fields = ['name', 'owner__email']
+
+    def get_user_email(self, obj):
+        return obj.owner.email
+    get_user_email.admin_order_field = 'owner__email'
+    get_user_email.short_description = 'Owner Email'
+
+    def get_queryset(self, request):
+        qs = super(GroupAdmin, self).get_queryset(request)
+        qs = qs.annotate(models.Count('groupuser'))
+        return qs
+
+    def get_member_count(self, obj):
+        return obj.groupuser__count
+    get_member_count.admin_order_field = 'groupuser__count'
+    get_member_count.short_description = 'Member Count'
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Cluster, ClusterAdmin)
 admin.site.register(Notice, NoticeAdmin)
+admin.site.register(Group, GroupAdmin)

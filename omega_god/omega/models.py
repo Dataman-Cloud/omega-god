@@ -79,15 +79,6 @@ class Node(Base):
     def __str__(self):
         return self.name
 
-class NodeAttribute(Base):
-
-    class Meta:
-       db_table = 'node_attribute'
-       app_label = 'omega'
-
-    id = models.AutoField(primary_key=True)
-    node = models.ForeignKey(Node)
-    attribute = models.CharField(max_length=255, null=False)
 
 class Service(Base):
 
@@ -112,3 +103,41 @@ class Notice(Base):
     id = models.AutoField(primary_key=True)
     content = models.CharField(max_length=1000, null=True)
     enabled = models.BooleanField(default=False, null=False)
+
+
+class Role(Base):
+
+    class Meta:
+        db_table = 'role'
+        app_label = 'omega'
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=128, null=False)
+
+
+class Group(Base):
+
+    class Meta:
+        db_table = 'group'
+        app_label = 'omega'
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=128, null=False)
+    description = models.CharField(max_length=255)
+    owner = models.ForeignKey(User, null=False)
+
+    @property
+    def member_count(self):
+        return GroupUser.objects.filter(group__id=self.id).count()
+
+
+class GroupUser(Base):
+
+    class Meta:
+        db_table = 'group_user'
+        app_label = 'omega'
+
+    id = models.AutoField(primary_key=True)
+    group = models.ForeignKey(Group, null=False)
+    user = models.ForeignKey(User, null=False)
+    role = models.ForeignKey(Role, null=False)
