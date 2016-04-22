@@ -9,6 +9,7 @@ from omega.models import User, Cluster
 
 class ApplicationAdmin(MultiDBModelAdmin):
     using = 'oapp'
+    ordering = ('-created',)
 
     readonly_fields = ('id', 'name', 'uid', 'cid', 'instances',
                        'status', 'aliase', 'created', 'updated'
