@@ -16,7 +16,7 @@ class ClusterInline(MultiDBTabularInline):
     model = Cluster
     extra = 0
     readonly_fields = ('name', 'owner', 'cluster_type', 'master_ips',
-                           'created_at', 'updated_at', 'status'
+                           'created_at', 'updated_at', 'status', 'group'
                       )
 
 
@@ -33,7 +33,7 @@ class UserAdmin(MultiDBModelAdmin):
 
     readonly_fields = ('id', 'email', 'company', 'wechat_qq',
                        'phone_number', 'invitation_code', 'last_login',
-                        'created_at', 'updated_at', 'is_activated',
+                        'created_at', 'updated_at',
                         'is_superuser', 'is_stuff'
                       )
     fieldsets = [
