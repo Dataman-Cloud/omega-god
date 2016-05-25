@@ -5,6 +5,8 @@ from django.db import models
 from django.utils import timezone
 
 # Create your models here.
+from passlib.context import CryptContext
+
 
 class Base(models.Model):
 
@@ -32,6 +34,20 @@ class User(Base):
     is_activated = models.BooleanField(default=False)
     company = models.CharField(max_length=128, null=False)
     wechat_qq = models.CharField(max_length=128, null=False)
+
+    def make_password(self, raw_password):
+        context = CryptContext(
+            schemes=[
+                'pbkdf2_sha512',
+                'md5_crypt'
+            ],
+            deprecated=['md5_crypt'])
+        password = context.encrypt(raw_password).encode('utf8')
+        return password
+
+    def set_password(self, raw_password):
+        self.password = self.make_password(raw_password)
+        self._password = raw_password
 
     def __str__(self):
         return self.email

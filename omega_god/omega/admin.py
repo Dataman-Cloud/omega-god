@@ -1,6 +1,21 @@
+from functools import update_wrapper
+
+from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django import forms
-from django.contrib import admin
+from django.conf.urls import url
+from django.contrib import admin, messages
+from django.contrib.admin.utils import unquote
+from django.contrib.auth.admin import sensitive_post_parameters_m
+from django.contrib.auth.forms import AdminPasswordChangeForm
+from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
 from django.db import models
+from django.http import Http404, HttpResponseRedirect
+
+from django.template.response import TemplateResponse
+from django.utils.encoding import force_text
+from django.utils.html import escape
+from django.utils.translation import ugettext as _, ugettext
 
 from multidb import MultiDBModelAdmin, MultiDBTabularInline
 from daterange_filter.filter import DateTimeRangeFilter
@@ -51,6 +66,87 @@ class UserAdmin(MultiDBModelAdmin):
     list_display = ('id', 'email', 'company', 'wechat_qq', 'phone_number', 'created_at', 'last_login', 'is_activated', 'is_superuser')
     list_filter = [('created_at', DateTimeRangeFilter), ('last_login', DateTimeRangeFilter), 'is_activated']
     search_fields = ['email', 'company', 'phone_number', 'wechat_qq']
+
+    # django options, auth/admin
+    change_form_template = 'custom_change.html'
+    change_password_form = AdminPasswordChangeForm
+
+    @sensitive_post_parameters_m
+    def reset_password(self, request, object_id):
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+        user = self.get_object(request, unquote(object_id))
+        if user is None:
+            raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {
+                'name': force_text(self.model._meta.verbose_name),
+                'key': escape(id),
+            })
+
+        media = self.media
+        opts = self.model._meta
+        preserved_filters = self.get_preserved_filters(request)
+        form_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, '')
+
+        if request.method == 'POST':
+            form = self.change_password_form(user, request.POST)
+            if form.is_valid():
+                form.save()
+                change_message = self.construct_change_message(request, form, None)
+                self.log_change(request, user, change_message)
+                msg = ugettext('Password changed successfully.')
+                messages.success(request, msg)
+                return HttpResponseRedirect(
+                    reverse(
+                        '%s:%s_%s_change' % (
+                            self.admin_site.name,
+                            user._meta.app_label,
+                            user._meta.model_name,
+                        ),
+                        args=(user.pk,),
+                    )
+                )
+        else:
+            form = self.change_password_form(user)
+
+        fieldsets = [(None, {'fields': list(form.base_fields)})]
+        adminForm = admin.helpers.AdminForm(form, fieldsets, {})
+
+        context = dict(self.admin_site.each_context(request),
+                       title=(_('Reset password | Django site admin')),
+                       object_id=object_id,
+                       original=user,
+                       media=media,
+                       errors=[],
+                       preserved_filters=self.get_preserved_filters(request),
+                       )
+
+        context.update({
+            'has_change_permission': self.has_change_permission(request, user),
+            'form_url': form_url,
+            'opts': opts,
+            'adminForm': adminForm,
+            'form': form,
+        })
+        context.update(self.admin_site.each_context(request))
+        request.current_app = self.admin_site.name
+
+        return TemplateResponse(request, 'reset_password.html', context)
+
+    def get_urls(self):
+        def wrap(view):
+            def wrapper(*args, **kwargs):
+                return self.admin_site.admin_view(view)(*args, **kwargs)
+
+            wrapper.model_admin = self
+            return update_wrapper(wrapper, view)
+
+        urls = super(UserAdmin, self).get_urls()
+
+        info = self.model._meta.app_label, self.model._meta.model_name
+        my_urls = [url(r'^(.+)/reset_password/$', wrap(self.reset_password),
+                       name='%s_%s_reset_password' % info)]
+
+        return my_urls + urls
 
 
 class ClusterAdmin(MultiDBModelAdmin):
