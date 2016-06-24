@@ -27,6 +27,18 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         # on the 'other' database.
         return super(MultiDBModelAdmin, self).formfield_for_manytomany(db_field, request=request, using=self.using, **kwargs)
 
+    # for read only user
+    def get_readonly_fields(self, request, obj=None):
+        if not request.user.is_superuser and self._user_is_readonly(request):
+            return [f.name for f in self.model._meta.fields]
+        return self.readonly_fields
+
+    def _user_is_readonly(self, request):
+        groups = [x.name for x in request.user.groups.all()]
+
+        return "readonly" in groups
+
+
 class MultiDBTabularInline(admin.TabularInline):
     using = ''
 
