@@ -73,7 +73,8 @@ class UserAdmin(MultiDBModelAdmin):
 
     @sensitive_post_parameters_m
     def reset_password(self, request, object_id):
-        if not self.has_change_permission(request):
+        if not self.has_change_permission(request) \
+                or self._user_is_readonly(request):
             raise PermissionDenied
         user = self.get_object(request, unquote(object_id))
         if user is None:
